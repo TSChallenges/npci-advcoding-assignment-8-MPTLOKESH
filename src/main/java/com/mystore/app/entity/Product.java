@@ -3,18 +3,38 @@ package com.mystore.app.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
+import jakarta.validation.constraints.*;
+
 @Entity
 public class Product {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
+    @NotBlank
+    @NotEmpty
     private String name;
 
+    @NotNull
+    @NotBlank
+    @NotEmpty
     private String category;
 
+    @NotNull
+    @Positive
+    @Min(value = 100, message = "Please don't add any product with price lesser than 100")
+    @Max(value = 50000, message = "This platform doesn't allow high priced products. Prices must be <= 50000")
     private Double price;
 
+    @NotNull
+    @Positive
+    @Min(value = 10)
+    @Max(value = 500)
     private Integer stockQuantity;
 
     public Product() {

@@ -5,6 +5,13 @@ import com.mystore.app.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +29,12 @@ public class ProductService {
         return product;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(int page, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        return productRepository.findAll(pageable);
     }
+    
 
     public Product getProduct(Integer id) {
         Optional<Product> productOptional = productRepository.findById(id);
@@ -50,15 +60,22 @@ public class ProductService {
     }
 
     // TODO: Method to search products by name
-
+    public List<Product> searchProductsByName(String name) {
+        return productRepository.findByNameIgnoreCaseContaining(name);
+    }
 
     // TODO: Method to filter products by category
-
+    public List<Product> searchProductsByCategory(String category) {
+        return productRepository.findByCategoryIgnoreCase(category);
+    }
 
     // TODO: Method to filter products by price range
-
+    public List<Product> filterProductsByPriceBetween(Double minPrice, Double maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice);
+    }
 
     // TODO: Method to filter products by stock quantity range
-
-
+    public List<Product> filterProductsByStockRange(Integer minStock, Integer maxStock) {
+        return productRepository.findByStockQuantityBetween(minStock, maxStock);
+    }   
 }
